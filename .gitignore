@@ -1,0 +1,19 @@
+# Terraform caches, local configuration, plans, and state
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+*.tfbackend
+!*.tfbackend.example
+crash.log
+crash.*.log
+.env
+.env.*
+!.env.example
+__pycache__/
+.venv/
+**/bin/
+**/obj/
+# Commit .terraform.lock.hcl to keep provider selections reproducible.

@@ -1,0 +1,3 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/src/knowledgebridge_tools/.venv/Scripts/python.exe"
+}
