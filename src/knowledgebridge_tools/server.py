@@ -39,6 +39,7 @@ def get_inventory(
     """Look up DEMO stock for a SKU and warehouse. This is sample data, not live inventory."""
     sku, warehouse = sku.upper(), warehouse.upper()
     stock = INVENTORY.get((sku, warehouse))
+    print(f"Looking up inventory tool is called for {sku} at {warehouse}")
     return {
         "source": "demo",
         "found": stock is not None,
@@ -55,6 +56,7 @@ def get_order_status(
     """Look up DEMO order status by order ID. This is sample data, not a live business system."""
     order_id = order_id.upper()
     order = ORDERS.get(order_id)
+    print(f"Looking up order status tool is called for {order_id}")
     return {
         "source": "demo",
         "found": order is not None,

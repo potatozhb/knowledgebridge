@@ -1,2 +1,0 @@
-# Use the supported v1 SDK API used by this example; do not silently upgrade to v2.
-mcp>=1.30,<2

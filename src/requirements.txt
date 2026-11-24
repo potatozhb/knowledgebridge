@@ -1,0 +1,6 @@
+﻿# Official MCP SDK v1 and Foundry project client.
+mcp>=1.30,<2
+azure-ai-projects>=2.0,<3
+azure-identity>=1.25,<2
+python-dotenv>=1.2,<2
+httpx>=0.28,<1

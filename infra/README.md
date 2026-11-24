@@ -21,29 +21,20 @@ Terraform outputs the account ID, project ID, and project endpoint. Keep state a
 
 No model deployment or MCP hosting is included. Before creating the agent, deploy a compatible model in this Foundry account and grant the setup identity Foundry User (previously Azure AI User) access to the project. Configuring an authenticated MCP connection also requires the relevant project connection permissions. Resource-management Contributor access alone does not imply agent data-plane access.
 
-## Prepare the agent with the existing MCP tools
+## Run the simple Python example
 
-The [Python MCP server](../src/knowledgebridge_tools/README.md) exposes `get_inventory` and `get_order_status` with demonstration data. The setup command allowlists those exact tools, requires tool-call approval, and instructs the agent to label demo results. It does not host or modify the existing server.
+See [src/README.md](../src/README.md). The local agent uses the Foundry model configured in `src/.env` and calls the two tools through MCP.
 
-Run from the repository root:
+From the repository root:
 
 ```powershell
-src/knowledgebridge_tools/.venv/Scripts/python.exe -m pip install -r src/knowledgebridge_tools/requirements-foundry.txt
-$projectEndpoint = terraform -chdir=infra output -raw foundry_project_endpoint
-src/knowledgebridge_tools/.venv/Scripts/python.exe src/knowledgebridge_tools/setup_foundry_agent.py --project-endpoint $projectEndpoint --model-deployment '<existing-model-deployment>' --mcp-url 'https://<your-mcp-host>/mcp' --dry-run
+src/.venv/Scripts/python.exe -m pip install -r src/requirements.txt
+src/.venv/Scripts/python.exe src/agent.py "What is the status of SO-1002?"
 ```
-
-Replace both placeholders, then remove `--dry-run` to create a persistent agent version. Each execution creates a new version under `knowledge-bridge`; it does not delete existing versions. Add `--connection-id '<project-connection-name-or-id>'` for a Foundry project connection holding MCP authentication; do not pass secrets in URLs or source code.
-
-Foundry must be able to reach the HTTPS MCP URL. `127.0.0.1:8000/mcp` works only for the local smoke test and is rejected by the setup command. Configure hosting, authentication, and the chosen network path before connecting real data. A Foundry project alone does not deploy the server or register an agent.
-
-Use the Foundry playground or a Responses API client to invoke the created agent. Clients must handle `mcp_approval_request` and submit approval responses. Example questions: "How many KB-100 are available in SEA?" and "What is the status of SO-1002?" Both answers must identify their source as demo data.
-
-References: [Foundry Terraform resources](https://learn.microsoft.com/en-us/azure/foundry/how-to/create-resource-terraform), [Foundry remote MCP tools](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/model-context-protocol?view=foundry).
 
 ## Verification (2026-11-24)
 
-Terraform formatting and validation passed with AzureRM 4.81.0. The current authenticated plan saved as `foundry.tfplan` reads the existing group and reports 2 to add, 0 to change, 0 to destroy; only the Foundry account and project are created. No apply was run. The agent setup dry-run and syntax check passed. The existing MCP smoke test passed discovery, both tool calls, missing records, and malformed inputs. Live agent creation and Foundry-to-MCP calls await a model deployment and hosted HTTPS MCP URL.
+Terraform formatting and validation passed with AzureRM 4.81.0. The current authenticated plan saved as `foundry.tfplan` reads the existing group and reports 2 to add, 0 to change, 0 to destroy; only the Foundry account and project are created. No apply was run. The local MCP client and Foundry model example were verified. The existing MCP smoke test passed discovery, both tool calls, missing records, and malformed inputs. Live agent creation and Foundry-to-MCP calls await a model deployment and hosted HTTPS MCP URL.
 
 ## Recover a soft-deleted Foundry account
 

@@ -2,28 +2,39 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "MCP: smoke test (stdio)",
+      "name": "MCP: client (stdio)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${workspaceFolder}/src/knowledgebridge_tools/.venv/Scripts/python.exe",
-      "program": "${workspaceFolder}/src/knowledgebridge_tools/smoke_test.py",
+      "python": "${workspaceFolder}/src/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/src/client.py",
       "console": "integratedTerminal"
     },
     {
       "name": "MCP: server (HTTP)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${workspaceFolder}/src/knowledgebridge_tools/.venv/Scripts/python.exe",
+      "python": "${workspaceFolder}/src/.venv/Scripts/python.exe",
       "program": "${workspaceFolder}/src/knowledgebridge_tools/server.py",
       "console": "integratedTerminal"
     },
     {
-      "name": "MCP: smoke test (HTTP, server must be running)",
+      "name": "MCP: client (HTTP, server must be running)",
       "type": "debugpy",
       "request": "launch",
-      "python": "${workspaceFolder}/src/knowledgebridge_tools/.venv/Scripts/python.exe",
-      "program": "${workspaceFolder}/src/knowledgebridge_tools/smoke_test.py",
-      "args": ["--url", "http://127.0.0.1:8000/mcp"],
+      "python": "${workspaceFolder}/src/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/src/client.py",
+      "args": [
+        "--url",
+        "http://127.0.0.1:8000/mcp"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Foundry: agent with MCP tools",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/src/.venv/Scripts/python.exe",
+      "program": "${workspaceFolder}/src/agent.py",
       "console": "integratedTerminal"
     }
   ]
