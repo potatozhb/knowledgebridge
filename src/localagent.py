@@ -18,6 +18,8 @@ INSTRUCTIONS = (
 async def answer(session, responses, model: str, question: str) -> str:
     """Let the model choose tools, execute them via MCP, then return its answer."""
     discovered = (await session.list_tools()).tools
+    print(f"Model name is {model}")
+    
     tools = [
         {"type": "function", "name": tool.name, "description": tool.description or "",
          "parameters": tool.inputSchema, "strict": False}
