@@ -2,6 +2,54 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 .\.venv\Scripts\Activate.ps1
 
+publish to azure steps:
+
+az login
+az account set --subscription "2f482561-182f-4bd5-840b-1dc7d21f0811"
+
+Find your App Service name:
+az webapp list --resource-group knowledge-bridge --query "[].name" -o tsv
+
+Configure startup and dependency installation
+az webapp config set --resource-group knowledge-bridge --name $appName --startup-file "python -m uvicorn app:app --host 0.0.0.0 --port 8000"
+
+az webapp config appsettings set --resource-group knowledge-bridge --name $appName --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+
+Create the deployment ZIP:
+Run this from C:\Code\knowledgebridge\src:
+
+@'
+from pathlib import Path
+from zipfile import ZipFile
+
+files = [Path("app.py"), Path("requirements.txt")]
+files += list(Path("knowledgebridge_tools").glob("*.py"))
+
+with ZipFile("app.zip", "w") as archive:
+    for file in files:
+        archive.write(file, file.as_posix())
+'@ | python -
+
+publish: 
+
+az webapp deploy --resource-group knowledge-bridge --name $appName --src-path app.zip --type zip
+
+
+Get the MCP URL and connect:
+
+$webHost = az webapp show --resource-group knowledge-bridge --name $appName --query defaultHostName -o tsv
+
+$mcpUrl = "https://$webHost/mcp"
+$mcpUrl
+
+Test using your local client:
+python client.py --url $mcpUrl
+
+Or use your local agent:
+python localagent.py "Check inventory for KB-100" --url $mcpUrl
+
+To use Azure by default, put the printed URL in your local .env:
+MCP_SERVER_URL=https://YOUR-ACTUAL-APP-HOSTNAME/mcp
 
 # KnowledgeBridge
 

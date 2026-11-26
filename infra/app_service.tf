@@ -40,7 +40,7 @@ resource "azurerm_linux_web_app" "tools" {
     ftps_state              = "Disabled"
     minimum_tls_version     = "1.2"
     scm_minimum_tls_version = "1.2"
-
+    app_command_line = "python -m uvicorn app:app --host 0.0.0.0 --port 8000"
     application_stack {
       python_version = "3.12"
     }

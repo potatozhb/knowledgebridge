@@ -5,3 +5,4 @@ azure-ai-projects>=2.0,<3
 azure-identity>=1.25,<2
 python-dotenv>=1.2,<2
 httpx2>=2.12,<3
+uvicorn>=0.35,<1

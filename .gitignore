@@ -16,4 +16,5 @@ __pycache__/
 .venv/
 **/bin/
 **/obj/
+*.zip
 # Commit .terraform.lock.hcl to keep provider selections reproducible.

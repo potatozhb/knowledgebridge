@@ -1,6 +1,7 @@
 """Two read-only MCP tools backed by clearly labeled demonstration data."""
 
 import argparse
+import sys
 
 from fastmcp import FastMCP
 
@@ -21,8 +22,10 @@ if __name__ == "__main__":
     parser.add_argument("--transport", choices=["http", "streamable-http", "stdio"], default="streamable-http")
     args = parser.parse_args()
     if args.transport == "stdio":
+        print("Starting MCP server over stdio...", file=sys.stderr)
         mcp.run(transport="stdio", show_banner=False)
     else:
+        print(f"Starting MCP server over {args.transport}...", file=sys.stderr)
         mcp.run(
             transport="http", host="127.0.0.1", port=8000,
             stateless_http=True, json_response=True, show_banner=False,
