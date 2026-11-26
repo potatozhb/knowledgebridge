@@ -4,10 +4,18 @@ import argparse
 from contextlib import asynccontextmanager
 import asyncio
 import json
+from importlib.metadata import version
 import os
 from pathlib import Path
 import sys
 from urllib.parse import urlsplit
+
+# This example uses the MCP v1 API; fail before spawning an incompatible server.
+if not version("mcp").startswith("1."):
+    raise RuntimeError(
+        "This example requires mcp>=1.30,<2. Run it with the project interpreter: "
+        + str(Path(__file__).parent / ".venv" / "Scripts" / "python.exe")
+    )
 
 from dotenv import load_dotenv
 import httpx

@@ -1,3 +1,6 @@
 ﻿# Use object IDs from the subscription tenant (guest users have tenant-specific IDs).
 # az ad signed-in-user show --query id -o tsv
 foundry_user_object_ids = []
+
+# Optional globally unique App Service name override.
+# app_service_name = "knowledge-bridge-tools-your-suffix"

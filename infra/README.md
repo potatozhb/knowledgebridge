@@ -29,7 +29,7 @@ From the repository root:
 
 ```powershell
 src/.venv/Scripts/python.exe -m pip install -r src/requirements.txt
-src/.venv/Scripts/python.exe src/agent.py "What is the status of SO-1002?"
+src/.venv/Scripts/python.exe src/localagent.py "What is the status of SO-1002?"
 ```
 
 ## Verification (2026-11-24)
@@ -64,3 +64,30 @@ terraform -chdir=infra apply foundry-access.tfplan
 Owner or Contributor resource-management access does not replace Foundry agent data-plane access. Applying role assignments requires role-assignment permissions. After assignment, allow Azure RBAC propagation and refresh the Foundry portal; sign out and in again if the existing session remains stale.
 
 [Foundry RBAC documentation](https://learn.microsoft.com/en-us/azure/foundry/concepts/rbac-foundry).
+
+## Python MCP App Service
+
+`app_service.tf` creates a Linux B1 App Service plan and Python 3.12 Web App in the existing resource group. HTTPS and TLS 1.2 are enforced, Always On is enabled, and FTP/basic publishing authentication is disabled. A system-assigned managed identity is available for future SQL, Storage, or other service permissions; no downstream access is granted by this configuration.
+
+The default app name is `knowledge-bridge-tools-46535bec`; override `app_service_name` if necessary. Estimated B1 Linux plan cost in Canada Central is approximately US$13/month for one instance, excluding other Azure services and data transfer. A paid plan continues billing while allocated, even before application code is deployed.
+
+From the repository root:
+
+```powershell
+terraform -chdir=infra init
+terraform -chdir=infra validate
+terraform -chdir=infra plan -out="app-service.tfplan"
+terraform -chdir=infra apply app-service.tfplan
+terraform -chdir=infra output -raw app_service_url
+```
+
+This provisions hosting only. The Python MCP server still needs to be deployed with an HTTP entrypoint, startup configuration, and endpoint authentication before connecting a Foundry agent. The initial Web App URL is not yet an MCP endpoint. Local `src/.env` and agent/client files are not uploaded during resource creation.
+
+App Service provisioning completed successfully: 2 resources added, 0 changed, 0 destroyed. Azure reports the Web App as Running with HTTPS enabled. The existing resource group and Foundry resources were unchanged.
+
+- Web App: `knowledge-bridge-tools-46535bec`
+- App Service plan: `knowledge-bridge-tools-plan` (Linux B1, one instance)
+- URL: https://knowledge-bridge-tools-46535bec.azurewebsites.net
+- [Open the Web App in Azure Portal](https://portal.azure.com/#resource/subscriptions/2f482561-182f-4bd5-840b-1dc7d21f0811/resourceGroups/knowledge-bridge/providers/Microsoft.Web/sites/knowledge-bridge-tools-46535bec/overview)
+
+MCP application code has not been deployed to this Web App yet.

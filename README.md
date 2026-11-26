@@ -1,3 +1,8 @@
+# Commands
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
+
+
 # KnowledgeBridge
 
 KnowledgeBridge is a planned internal knowledge and inventory assistant. Microsoft Teams and custom clients share one Microsoft Foundry agent, one company PDF knowledge source, and the same Python tools. Organization users submit new PDFs through the KnowledgeBridge Teams app. Azure Blob Storage holds the original PDFs, and Azure AI Search indexes their content for the agent.
