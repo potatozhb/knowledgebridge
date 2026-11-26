@@ -34,6 +34,8 @@ publish:
 
 az webapp deploy --resource-group knowledge-bridge --name $appName --src-path app.zip --type zip
 
+publish by file:
+powershell -ExecutionPolicy Bypass -File .\publish.ps1
 
 Get the MCP URL and connect:
 

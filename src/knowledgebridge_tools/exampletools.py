@@ -29,6 +29,8 @@ READ_ONLY = ToolAnnotations(
 
 def register_tools(mcp: FastMCP) -> None:
     """Attach these tools to the server's existing MCP instance."""
+    logger.info("Registering demo tools on MCP instance %s", mcp.name)
+    
     @mcp.tool(annotations=READ_ONLY)
     def get_inventory(
         sku: Annotated[str, Field(min_length=1, max_length=32, pattern=r"^[A-Za-z0-9-]+$")],

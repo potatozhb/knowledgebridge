@@ -2,8 +2,14 @@
 
 import argparse
 import sys
+import logging
 
 from fastmcp import FastMCP
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+)
 
 # Direct scripts and package imports resolve sibling modules differently.
 if __package__:
@@ -22,10 +28,10 @@ if __name__ == "__main__":
     parser.add_argument("--transport", choices=["http", "streamable-http", "stdio"], default="streamable-http")
     args = parser.parse_args()
     if args.transport == "stdio":
-        print("Starting MCP server over stdio...", file=sys.stderr)
+        logging.info("Starting MCP server over stdio...")
         mcp.run(transport="stdio", show_banner=False)
     else:
-        print(f"Starting MCP server over {args.transport}...", file=sys.stderr)
+        logging.info(f"Starting MCP server over {args.transport}...")
         mcp.run(
             transport="http", host="127.0.0.1", port=8000,
             stateless_http=True, json_response=True, show_banner=False,
