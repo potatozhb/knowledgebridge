@@ -1,4 +1,4 @@
-﻿"""Ask a Foundry model a question and execute its tool calls through MCP."""
+"""Ask a Foundry model a question and execute its tool calls through MCP."""
 
 import argparse
 import asyncio
@@ -22,7 +22,7 @@ async def answer(session, responses, model: str, question: str) -> str:
     
     tools = [
         {"type": "function", "name": tool.name, "description": tool.description or "",
-         "parameters": tool.inputSchema, "strict": False}
+         "parameters": tool.input_schema, "strict": False}
         for tool in discovered if tool.name in ALLOWED_TOOLS
     ]
     if {tool["name"] for tool in tools} != ALLOWED_TOOLS:

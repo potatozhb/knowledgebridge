@@ -1,6 +1,7 @@
-﻿# Official MCP SDK v1 and Foundry project client.
-mcp>=1.30,<2
+﻿# Standalone FastMCP with the official MCP SDK v2.
+fastmcp>=4,<5
+mcp>=2.3,<3
 azure-ai-projects>=2.0,<3
 azure-identity>=1.25,<2
-python-dotenv>=1.2
-httpx>=0.28,<1
+python-dotenv>=1.2,<2
+httpx2>=2.12,<3

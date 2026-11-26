@@ -4,21 +4,13 @@ import argparse
 from contextlib import asynccontextmanager
 import asyncio
 import json
-from importlib.metadata import version
 import os
 from pathlib import Path
 import sys
 from urllib.parse import urlsplit
 
-# This example uses the MCP v1 API; fail before spawning an incompatible server.
-if not version("mcp").startswith("1."):
-    raise RuntimeError(
-        "This example requires mcp>=1.30,<2. Run it with the project interpreter: "
-        + str(Path(__file__).parent / ".venv" / "Scripts" / "python.exe")
-    )
-
 from dotenv import load_dotenv
-import httpx
+import httpx2 as httpx
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.client.streamable_http import streamable_http_client
@@ -42,7 +34,7 @@ async def connect(url: str | None = None):
         print(f"Using authentication token: {token is not None}")
         headers = {"Authorization": f"Bearer {token}"} if token else {}
         async with httpx.AsyncClient(headers=headers, timeout=90) as http:
-            async with streamable_http_client(url, http_client=http) as (read, write, _):
+            async with streamable_http_client(url, http_client=http) as (read, write):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     yield session
@@ -64,10 +56,10 @@ async def call_tool(session: ClientSession, name: str, arguments: dict) -> str:
     if not isinstance(arguments, dict):
         return json.dumps({"error": "Tool arguments must be a JSON object"})
     result = await session.call_tool(name, arguments=arguments)
-    if result.isError:
+    if result.is_error:
         return json.dumps({"error": "Tool rejected the request; check its arguments"})
-    if result.structuredContent is not None:
-        return json.dumps(result.structuredContent)
+    if result.structured_content is not None:
+        return json.dumps(result.structured_content)
     return "\n".join(block.text for block in result.content if block.type == "text")
 
 

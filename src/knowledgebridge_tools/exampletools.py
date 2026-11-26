@@ -4,7 +4,7 @@
 import logging
 from typing import Annotated
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 from pydantic import Field
 
@@ -23,7 +23,7 @@ ORDERS = {
     "SO-1002": {"status": "shipped", "sku": "KB-200", "quantity": 1, "warehouse": "SEA"},
 }
 READ_ONLY = ToolAnnotations(
-    readOnlyHint=True, destructiveHint=False, idempotentHint=True, openWorldHint=False
+    read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=False
 )
 
 
