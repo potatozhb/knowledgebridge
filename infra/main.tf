@@ -5,12 +5,21 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 4.81, < 5.0"
     }
+    
+    azapi = {
+      source ="Azure/azapi"
+      version = ">= 2.9, < 3.0"
+    }
   }
 }
 
 provider "azurerm" {
   subscription_id = var.subscription_id
   features {}
+}
+
+provider "azapi" {
+  subscription_id = var.subscription_id
 }
 
 variable "subscription_id" {
@@ -115,4 +124,60 @@ resource "azurerm_role_assignment" "foundry_user" {
   role_definition_id = "/subscriptions/${var.subscription_id}/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d"
   principal_id       = each.value
   principal_type     = "User"
+}
+
+
+variable "agent_model_deployment" {
+  description = "Name of an existing Foundry model deployment."
+  type        = string
+}
+
+variable "agent_mcp_url" {
+  description = "URL of the MCP server to be used by the Foundry agent."
+  type        = string
+}
+
+resource "azapi_data_plane_resource" "knowledgebridge_agent" {
+  type      = "Microsoft.Foundry/agents@v1"
+  parent_id = "${azurerm_cognitive_account.foundry.custom_subdomain_name}.services.ai.azure.com/api/projects/${azurerm_cognitive_account_project.main.name}"
+  name      = "knowledgebridge-agent"
+
+  body = {
+    name = "knowledgebridge-agent"
+    definition = {
+      kind = "prompt"
+      model = var.agent_model_deployment
+      instructions = <<-TEXT
+        You are a helpful assistant that can answer questions about the KnowledgeBridge inventory and order status.
+        You have access to two tools: get_inventory and get_order_status.
+        Use these tools to answer user questions accurately and concisely.
+      TEXT
+      tools = [
+        {
+          type = "mcp"
+          server_label = "KnowledgeBridge_MCP_Tools"
+          server_url = var.agent_mcp_url
+          allowed_tools = ["get_inventory", "get_order_status"]
+          require_approval = {
+            never ={
+              tool_names = [ "get_order_status"]
+            }
+            always = {
+              tool_names = ["get_inventory"]
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  depends_on = [
+    azurerm_role_assignment.foundry_user
+  ]
+
+}
+
+output "agent_name" {
+  description = "Name of the Foundry agent resource."
+  value       = azapi_data_plane_resource.knowledgebridge_agent.name
 }
