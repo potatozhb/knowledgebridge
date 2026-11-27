@@ -11,6 +11,10 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 
+# Keep application INFO logs while suppressing telemetry transport chatter.
+logging.getLogger("azure").setLevel(logging.WARNING)
+logging.getLogger("opentelemetry").setLevel(logging.WARNING)
+
 # Direct scripts and package imports resolve sibling modules differently.
 if __package__:
     from .exampletools import register_tools as register_tools_exampletools
